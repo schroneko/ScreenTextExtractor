@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build-and-release:
     runs-on: macos-latest
@@ -24,44 +27,25 @@ jobs:
         chmod +x create_dmg.sh
         ./create_dmg.sh
         
-    - name: Get version from tag
-      id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-      
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+    - name: Create Release with GitHub CLI
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ScreenTextExtractor ${{ steps.get_version.outputs.VERSION }}
-        body: |
-          ## ScreenTextExtractor ${{ steps.get_version.outputs.VERSION }}
-          
-          ### インストール方法
-          1. `ScreenTextExtractor-1.0.dmg` をダウンロード
-          2. DMGファイルを開く
-          3. ScreenTextExtractor.app を Applications フォルダにドラッグ&ドロップ
-          4. アプリケーションから起動
-          
-          ### 使用方法
-          - `Cmd+Shift+2` でOCR機能を起動
-          - 画面の任意の領域を選択してテキストを抽出
-          
-          ### システム要件
-          - macOS 15.0 (Sequoia) 以降
-          - 画面録画権限の許可が必要
-          
-        draft: false
-        prerelease: false
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create ${{ github.ref_name }} \
+          --title "ScreenTextExtractor ${{ github.ref_name }}" \
+          --notes "## ScreenTextExtractor ${{ github.ref_name }}
         
-    - name: Upload DMG
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./ScreenTextExtractor-1.0.dmg
-        asset_name: ScreenTextExtractor-1.0.dmg
-        asset_content_type: application/x-apple-diskimage
+        ### インストール方法
+        1. \`ScreenTextExtractor-1.0.dmg\` をダウンロード
+        2. DMGファイルを開く
+        3. ScreenTextExtractor.app を Applications フォルダにドラッグ&ドロップ
+        4. アプリケーションから起動
+        
+        ### 使用方法
+        - \`Cmd+Shift+2\` でOCR機能を起動
+        - 画面の任意の領域を選択してテキストを抽出
+        
+        ### システム要件
+        - macOS 15.0 (Sequoia) 以降
+        - 画面録画権限の許可が必要" \
+          ./ScreenTextExtractor-1.0.dmg
