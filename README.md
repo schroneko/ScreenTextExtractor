@@ -17,13 +17,10 @@ macOS用のOCRアプリケーション。画面の任意の領域を選択して
 
 ## インストール
 
-```bash
-# ビルド
-./create_app.sh
-
-# Applicationsフォルダにインストール
-mv ScreenTextExtractor.app /Applications/
-```
+1. [Releases](https://github.com/schroneko/ScreenTextExtractor/releases) から最新の `ScreenTextExtractor-1.0.dmg` をダウンロード
+2. DMGファイルをダブルクリックして開く
+3. `ScreenTextExtractor.app`を`Applications`フォルダにドラッグ&ドロップ
+4. アプリケーションフォルダまたはSpotlightから起動
 
 ## 使用方法
 
